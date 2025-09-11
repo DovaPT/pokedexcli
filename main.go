@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strings"
+)
+
 func main(){
 	var actual, expected string
 	expected = "test"
@@ -12,5 +17,7 @@ func main(){
 }
 
 func cleanInput(text string) []string{
-	return []string{}
+	words := strings.Fields(text)
+	fmt.Printf("%v\n", words)
+	return words
 }
