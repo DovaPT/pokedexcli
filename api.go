@@ -6,17 +6,26 @@ import (
 	"net/http"
 )
 
-type LocationData struct{
-	Count int `json:"count"`
-	Next *string `json:"next"`
+type LocationData struct {
+	Count    int     `json:"count"`
+	Next     *string `json:"next"`
 	Previous *string `json:"previous"`
-	Results []struct {
+	Results  []struct {
 		Name string `json:"name"`
-		Url string `json:"url"`
-	}`json:"results"`
+		Url  string `json:"url"`
+	} `json:"results"`
 }
 
-func getLocations(path *string) (LocationData, error){
+type LocationArea struct {
+	Name             string `json:"name"`
+	PokemonEncounter []struct {
+		Pokemon struct {
+			Name string `json:"name"`
+		}`json:"pokemon"`
+	}`json:"pokemon_encounters"`
+}
+
+func getLocations(path *string) (LocationData, error) {
 	jsonData, err := queryApi(*path)
 	if err != nil {
 		return LocationData{}, err
@@ -27,9 +36,19 @@ func getLocations(path *string) (LocationData, error){
 	return locations, nil
 }
 
+func getLocationInfo(location *string) (LocationArea, error) {
+	jsonData, err := queryApi("https://pokeapi.co/api/v2/location-area/" + *location)
+	if err != nil {
+		return LocationArea{}, err
+	}
+	var info LocationArea
+	json.Unmarshal(jsonData, &info)
+	
+	return info, nil
+}
 
-func queryApi(url string) ([]byte, error){
-  res, err := http.Get(url)
+func queryApi(url string) ([]byte, error) {
+	res, err := http.Get(url)
 	if err != nil {
 		return []byte{}, err
 	}

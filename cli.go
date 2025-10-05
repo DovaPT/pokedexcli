@@ -30,6 +30,11 @@ func init(){
 			description: "Displays the previous 20 locations",
 			callback: commandMapb,
 		},
+		"explore": {
+			name: "explore [location]",
+			description: "Shows pokemon found in location.",
+			callback: commandExplore,
+		},
 	}
 }
 
@@ -43,6 +48,7 @@ type CliCommand struct {
 type CommandConfig struct {
 	Next *string
 	Prev *string
+	Location *string
 }
 
 func cleanInput(text string) []string{
@@ -98,5 +104,21 @@ func commandMapb(cfg *CommandConfig) error {
 
 	cfg.Next = locationData.Next
 	cfg.Prev = locationData.Previous
+	return nil
+}
+
+func commandExplore(cfg *CommandConfig)error {
+	if cfg.Location == nil{
+		return nil
+	}
+	pokemon, err := getLocationInfo(cfg.Location)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Exoloring %s...\n", *cfg.Location)
+	println("Found Pokemon:")
+	for _, mon := range pokemon.PokemonEncounter{
+		fmt.Printf(" - %s\n", mon.Pokemon.Name)
+	}
 	return nil
 }
